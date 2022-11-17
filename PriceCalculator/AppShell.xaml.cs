@@ -1,9 +1,10 @@
-﻿namespace PriceCalculator;
-
-public partial class AppShell : Shell
+﻿namespace PriceCalculator
 {
-	public AppShell()
-	{
-		InitializeComponent();
-	}
+    public partial class AppShell : Shell
+    {
+        public AppShell()
+        {
+            InitializeComponent();
+        }
+    }
 }
