@@ -9,6 +9,8 @@ namespace PriceCalculator
             InitializeComponent();
 
             MainPage = new AppShell();
+            Preferences.Set("height", 0);
+            Preferences.Set("width", 0);
         }
 
         protected override Window CreateWindow(IActivationState activationState)
@@ -18,7 +20,7 @@ namespace PriceCalculator
             // default values that will later be ovewritten by a fraction of the display's dimensions
             w.MinimumWidth = 300;
             w.MaximumWidth = 300;
-            w.MinimumHeight =600;
+            w.MinimumHeight = 600;
             w.MaximumHeight = 600;
             return w;
         }
