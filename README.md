@@ -7,4 +7,5 @@ A reprogrammable margin calculator built using python
 - [Tkinter messagebox](https://www.tutorialspoint.com/python/tk_button.htm)
 - [Calculator Icon](http://www.iconarchive.com/show/small-n-flat-icons-by-paomedia/calculator-icon.html)
 - [Python Gitignore](https://github.com/github/gitignore/blob/main/Python.gitignore#L1)
+- [Pyinstaller](https://pyinstaller.org/en/stable/operating-mode.html)
 - 
