@@ -10,6 +10,7 @@ class App(ctk.CTk):
     # configure window
     self.title("Price Calculator")
     self.geometry(f'{400}x{800}')
+    self.resizable(width= False, height= False)
 
     # add a tab control
     self.tabview = ctk.CTkTabview(self, width=self._current_width - 20, height=self._current_height - 20)
