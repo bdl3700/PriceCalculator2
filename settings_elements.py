@@ -30,7 +30,7 @@ class SettingsFrame(ctk.CTkFrame):
     self.tax_rate_label.grid(row=3, column=1, padx=(0, 0), pady=(0, 0), sticky='nsew')
 
     tax_vcmd = self.register(self.tax_rate_validate)
-    self.tax_rate_entry = ctk.CTkEntry(self, width=140, height=24, placeholder_text='0.00%', validate="focusout", validatecommand=(tax_vcmd, '%P'))
+    self.tax_rate_entry = ctk.CTkEntry(self, width=140, height=24, placeholder_text='0.00%', validate="focusout", validatecommand=(tax_vcmd))
     self.tax_rate_entry.grid(row=3, column=2, padx=(10, 0), pady=(0, 0), sticky="nsew")
     
     self.save_button = ctk.CTkButton(self, width=140, height=28, text='Save', command=self.save_settings)
@@ -41,44 +41,56 @@ class SettingsFrame(ctk.CTkFrame):
     self.tax_rate_entry.insert(0, str(round(settings.shared_settings.tax_rate, 4)))
     self.shared_path_entry.insert(0, settings.shared_path)
 
-  def tax_rate_validate(self, P):
-    # Authenticate
-    authenticated = self.authenticate()
-
-    # Revert if authentication fails
-    if not authenticated:
-      self.tax_rate_entry.delete(0,tkinter.END)
-      self.tax_rate_entry.insert(0,self.settings.shared_settings.tax_rate)
-
-      return False
-
+  def tax_rate_validate(self):
     # Verify that the rate is in an appropriate format
     val = self.tax_rate_entry.get()
     if val.replace('.', '').isnumeric() and val.count('.') <= 1 and float(val) >= 0:
-      self.settings.shared_settings.tax_rate = float(val)  #TODO: make the user authenticate before shared settings are saved
-      print(f'The tax rate: {val}% will be calculated by multiplying inputs by {1 + self.settings.shared_settings.tax_rate/100}')
+      print(f'After Save the tax rate: {val}% will be calculated by multiplying inputs by {1 + float(val)/100}')
       return True
     if val == '':
       return True
     
-    # If the rate was not formatted correctly show a warning and select the box's contents.
+    # If the rate was not formatted correctly, show a warning and select the box's contents.
     tkinter.messagebox.showwarning('Invalid Tax Rate', f'The input tax rate ({val}) is not valid.\r\nPlease represent the tax rate as a positive percentage.\r\nEX: input 7.25 when tax is calculated by multiplying a retail price by 1.0725.')
     self.tax_rate_entry.focus()
-    self.tax_rate_entry.select_range(0, len(self.tax_rate_entry.get()))
+    self.tax_rate_entry.select_range(0, tkinter.END)
     print(val)
     return False
 
   def shared_path_validate(self):
-    v = isdir(self.shared_path_entry.get())
-    print(f'{self.shared_path_entry.get()} is a valid folder: {v}')
-    if v:
-      self.settings.shared_path = self.shared_path_entry.get()  #TODO: make this conditional on authentication
-    return v
+    # Verify that the Path is valid.
+    is_valid = isdir(self.shared_path_entry.get())
+    print(f'{self.shared_path_entry.get()} is a valid folder: {is_valid}')
+    
+    if not is_valid:
+      # If the path is not valid, show a warning and select the box's contents.
+      tkinter.messagebox.showwarning("Invalid File Path", f"The input file path ({self.shared_path_entry.get()}) is not valid. Please enter a valid folder path.")
+      self.shared_path_entry.focus()
+      self.shared_path_entry.select_range(0, tkinter.END)
+
+    return is_valid
   
   def save_settings(self):
     self.save_button.focus()
     print('Save button pressed')
-    self.settings.save()
+
+    # Authenticate
+    authenticated = self.authenticate()
+
+    # If authentication fails, revert changes
+    if not authenticated:
+      self.shared_path_entry.delete(0,tkinter.END)
+      self.shared_path_entry.insert(0,self.settings.shared_path)
+
+      self.tax_rate_entry.delete(0,tkinter.END)
+      self.tax_rate_entry.insert(0,self.settings.shared_settings.tax_rate)
+    
+    # Validate and if entries are valid, Save
+    else:
+      if self.shared_path_validate() and self.tax_rate_validate():
+        self.settings.shared_path = self.shared_path_entry.get()
+        self.settings.shared_settings.tax_rate = float(self.tax_rate_entry.get())
+        self.settings.save()
 
   def authenticate(self) -> bool:
     input = tkinter.simpledialog.askstring("Authentication", "Please enter the settings passcode to make the desired alteration.", show="*")
