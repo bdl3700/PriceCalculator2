@@ -22,7 +22,7 @@ class Rounder():
 
 if __name__ == '__main__':
   # tests
-  r = Rounder(rounding_thresholds=[(5, .5), (20, 2), (100, 13)], round_down_threshold=0.2)
+  r = Rounder(_rounding_thresholds=[(5, .5), (20, 2), (100, 13)], _round_down_threshold=0.2)
   assert(r.round(1.3) == 1.5)
   assert(r.round(1.1) == 1)
   assert(r.round(.9) == 1)

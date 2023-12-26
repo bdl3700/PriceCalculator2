@@ -1,4 +1,6 @@
 import customtkinter as ctk
+import settings_elements
+import settings_model
 
 ctk.set_appearance_mode('dark')
 ctk.set_default_color_theme('blue')
@@ -14,7 +16,7 @@ class App(ctk.CTk):
 
     # add a tab control
     self.tabview = ctk.CTkTabview(self, width=self._current_width - 20, height=self._current_height - 20)
-    self.tabview.grid(row=0, column=2, padx=(10, 0), pady=(10, 0), sticky="nsew")
+    self.tabview.grid(row=0, column=2, padx=(5, 5), pady=(0, 0), sticky="nsew")
     self.tabview.add("Calculate")
     self.tabview.add("Type Config")
     self.tabview.add("Settings")
@@ -28,8 +30,10 @@ class App(ctk.CTk):
     self.combobox_1 = ctk.CTkComboBox(self.tabview.tab("Type Config"),
                                                 values=["Value 1", "Value 2", "Value Long....."])
     self.combobox_1.grid(row=1, column=0, padx=20, pady=(10, 10))
-    self.label_tab_2 = ctk.CTkLabel(self.tabview.tab("Settings"), text="CTkLabel on Tab 2")
-    self.label_tab_2.grid(row=0, column=0, padx=20, pady=20)
+    
+    s = settings_model.Settings()
+    self.settings_frame = settings_elements.SettingsFrame(self.tabview.tab('Settings'), s)
+    self.settings_frame.pack()
 
 
 

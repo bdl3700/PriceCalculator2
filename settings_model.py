@@ -25,7 +25,7 @@ class Settings():
         json_string = file.read()
         self.shared_settings = jsonpickle.decode(json_string)
     else:
-      self.shared_settings = SharedSettings(7.25, [ItemType('item1', .73, 1.1)], Rounder())
+      self.shared_settings = SharedSettings(7.25, [ItemType('item1', .73, 1.1)], Rounder(), "411")
 
     pass
 
@@ -37,10 +37,11 @@ class Settings():
       file.write(self.shared_path)
 
 class SharedSettings():
-  def __init__(self, _tax_rate: float, _types: list[ItemType], _rounder: Rounder ) -> None:
+  def __init__(self, _tax_rate: float, _types: list[ItemType], _rounder: Rounder, _passcode: str) -> None:
     self.tax_rate = _tax_rate
     self.types = _types
     self.rounder = _rounder
+    self.passcode = _passcode
     pass
 
 

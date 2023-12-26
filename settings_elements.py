@@ -23,9 +23,6 @@ class SettingsFrame(ctk.CTkFrame):
     self.shared_path_entry.grid(row=1, column=2, padx=(10, 0), pady=(0, 0), sticky="nsew")
     self.shared_path_entry._entry_focus_out(lambda : print(self.shared_path_entry.get()))
 
-    # print(settings.shared_path, '<-- is the path to shared settings')
-    # print('Tax Rate: ', settings.shared_settings.tax_rate)
-
     self.shared_settings_label = ctk.CTkLabel(self, width=380, height=60, text='Shared Settings', font=ctk.CTkFont(size=36, underline=True))
     self.shared_settings_label.grid(row=2, column=1, columnspan=3, pady=(10,0), sticky='nsew')
 
@@ -45,14 +42,26 @@ class SettingsFrame(ctk.CTkFrame):
     self.shared_path_entry.insert(0, settings.shared_path)
 
   def tax_rate_validate(self, P):
+    # Authenticate
+    authenticated = self.authenticate()
+
+    # Revert if authentication fails
+    if not authenticated:
+      self.tax_rate_entry.delete(0,tkinter.END)
+      self.tax_rate_entry.insert(0,self.settings.shared_settings.tax_rate)
+
+      return False
+
+    # Verify that the rate is in an appropriate format
     val = self.tax_rate_entry.get()
     if val.replace('.', '').isnumeric() and val.count('.') <= 1 and float(val) >= 0:
       self.settings.shared_settings.tax_rate = float(val)  #TODO: make the user authenticate before shared settings are saved
-      print(f'The tax rate: {val}% will be calculated by multiplying inputs by {self.settings.shared_settings.tax_rate}')
+      print(f'The tax rate: {val}% will be calculated by multiplying inputs by {1 + self.settings.shared_settings.tax_rate/100}')
       return True
     if val == '':
       return True
     
+    # If the rate was not formatted correctly show a warning and select the box's contents.
     tkinter.messagebox.showwarning('Invalid Tax Rate', f'The input tax rate ({val}) is not valid.\r\nPlease represent the tax rate as a positive percentage.\r\nEX: input 7.25 when tax is calculated by multiplying a retail price by 1.0725.')
     self.tax_rate_entry.focus()
     self.tax_rate_entry.select_range(0, len(self.tax_rate_entry.get()))
@@ -70,6 +79,17 @@ class SettingsFrame(ctk.CTkFrame):
     self.save_button.focus()
     print('Save button pressed')
     self.settings.save()
+
+  def authenticate(self) -> bool:
+    input = tkinter.simpledialog.askstring("Authentication", "Please enter the settings passcode to make the desired alteration.", show="*")
+
+    result = input == self.settings.shared_settings.passcode
+    print(f'Authenticated: {result}')
+
+    if not result:
+      tkinter.messagebox.showwarning("Authentication Error!", "Failed to Authenticate. Changes will not be made.")
+
+    return result
 
 
 if __name__ == "__main__":
