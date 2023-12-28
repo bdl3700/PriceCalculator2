@@ -2,6 +2,13 @@ Desmos.png
 buildcommand
 .vscode/
 
+# Nuitka compilation artifacts
+*.build/
+*.dist/
+*.exe
+*.cmd
+*.onefile-build/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import settings_elements
 import settings_model
+import sys
 
 ctk.set_appearance_mode('dark')
 ctk.set_default_color_theme('blue')
@@ -41,5 +42,9 @@ class App(ctk.CTk):
 
 
 if __name__ == "__main__":
+    # redirect stdout to file for logs
+    sys.stdout = open('C:\\ProgramData\\price_calc.log', 'a')
+
+    # start app
     app = App()
     app.mainloop()
